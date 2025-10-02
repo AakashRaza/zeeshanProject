@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Form - Digital Hub</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px 25px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      font-size: 1.4em;
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      border-color: #4e9cff;
+      box-shadow: 0 0 5px rgba(78, 156, 255, 0.3);
+    }
+
+    button {
+      width: 95%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #4e9cff;
+      color: #fff;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #3d88e3;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+      display: none;
+      text-align: left;
+    }
+
+    /* User cards */
+    li {
+      background: #f9fbff;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.2s;
+    }
+    li:hover {
+      transform: translateY(-3px);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #4e9cff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-info .name {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .user-info .email {
+      font-size: 13px;
+      color: #666;
+    }
+
+    /* Alert Box */
+    .alert {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4e9cff;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.3s ease;
+      z-index: 1000;
+    }
+    .alert.error {
+      background: #ff4c4c;
+    }
+    .alert.fade-out {
+      opacity: 0;
+      transform: translateY(-15px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>User Form</h2>
+    <form id="userForm">
+      <input type="text" name="name" placeholder="Name" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <button type="submit">Submit</button>
+    </form>
+
+    <h2>All Users</h2>
+    <button type="button" onclick="getUsers()">Get Users</button>
+    <ul id="userList"></ul>
+  </div>
+
+  <script>
+    const form = document.getElementById("userForm");
+    const userList = document.getElementById("userList");
+
+    // Utility: show alerts
+    function showAlert(message, type = "success") {
+      const alertBox = document.createElement("div");
+      alertBox.textContent = message;
+      alertBox.className = `alert ${type}`;
+      document.body.appendChild(alertBox);
+
+      setTimeout(() => {
+        alertBox.classList.add("fade-out");
+        setTimeout(() => alertBox.remove(), 400);
+      }, 2500);
+    }
+
+    // Add user
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch("/api/add-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) throw new Error("Failed to add user");
+        showAlert("✅ User added successfully!");
+        form.reset();
+      } catch (err) {
+        showAlert(`❌ ${err.message}`, "error");
+      }
+    });
+
+    // Fetch users (password protected)
+    async function getUsers() {
+      const password = prompt("Enter password to view users:");
+      if (!password) return;
+
+      try {
+        const res = await fetch(`/api/get-users?password=${encodeURIComponent(password)}`);
+        if (res.status === 401) {
+          showAlert("❌ Incorrect password!", "error");
+          return;
+        }
+        if (!res.ok) throw new Error("Failed to fetch users");
+
+        const users = await res.json();
+        userList.style.display = "block";
+        userList.innerHTML = users.map((u) => {
+          const initials = u.name ? u.name.charAt(0).toUpperCase() : "?";
+          return `
+            <li>
+              <div class="avatar">${initials}</div>
+              <div class="user-info">
+                <span class="name">${u.name}</span>
+                <span class="email">${u.email}</span>
+              </div>
+            </li>
+          `;
+        }).join("");
+        showAlert("📋 Users fetched successfully!");
+      } catch (err) {
+        showAlert(`❌ ${err.message}`, "error");
+      }
+    }
+  </script>
+</body>
+</html>
