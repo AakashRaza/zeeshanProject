@@ -1,129 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>User Form - Digital Hub</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registration & Admin Panel</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
     body {
+      background-color: #f5f5f5;
       margin: 0;
       padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #f5f7fa;
-      color: #333;
-      height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 30px 25px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      width: 400px;
-      text-align: center;
-      transition: 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-    }
-
-    h2 {
-      font-size: 1.4em;
-      margin-bottom: 20px;
-      color: #444;
-    }
-
-    input {
+    .container {
       width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      outline: none;
-      transition: border 0.2s;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(11, 7, 7, 0.1);
+      overflow: hidden;
+      margin: 30px auto;
     }
 
-    input:focus {
-      border-color: #4e9cff;
-      box-shadow: 0 0 5px rgba(78, 156, 255, 0.3);
+    .header {
+      background: #cc0000;
+      padding: 20px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    form {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .button-group {
+      text-align: right;
     }
 
     button {
-      width: 95%;
-      padding: 10px;
+      background-color: #cc0000;
+      color: white;
+      padding: 10px 20px;
       border: none;
-      border-radius: 6px;
-      background: #4e9cff;
-      color: #fff;
-      font-size: 15px;
-      font-weight: bold;
+      border-radius: 5px;
       cursor: pointer;
-      margin-top: 10px;
-      transition: 0.2s;
+      font-weight: bold;
     }
 
     button:hover {
-      background: #3d88e3;
+      background-color: #a30000;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 15px;
+    .hidden { display: none; }
+
+    .success {
       display: none;
-      text-align: left;
-    }
-
-    /* User cards */
-    li {
-      background: #f9fbff;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: transform 0.2s;
-    }
-    li:hover {
-      transform: translateY(-3px);
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #4e9cff;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      color: green;
       font-weight: bold;
-      font-size: 16px;
     }
 
-    .user-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .user-info .name {
-      font-weight: 600;
-      color: #333;
-    }
-
-    .user-info .email {
-      font-size: 13px;
-      color: #666;
-    }
-
-    /* Alert Box */
     .alert {
       position: fixed;
       top: 20px;
@@ -138,9 +106,7 @@
       animation: fadeIn 0.3s ease;
       z-index: 1000;
     }
-    .alert.error {
-      background: #ff4c4c;
-    }
+    .alert.error { background: #ff4c4c; }
     .alert.fade-out {
       opacity: 0;
       transform: translateY(-15px);
@@ -151,96 +117,264 @@
       from { opacity: 0; transform: translateY(-15px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    @media (max-width: 768px) {
+      .container { margin: 10px; width: 100%; }
+      button { width: 100%; margin-top: 10px; }
+      .button-group { text-align: center; }
+    }
+
+    /* ===== Admin Section ===== */
+    .admin-container {
+      width: 95%;
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .user-container {
+      margin-top: 25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .user-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .user-card:hover { transform: translateY(-4px); }
+
+    .user-card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .user-card h3 { margin: 5px 0; color: #cc0000; }
+
+    .user-card p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #333;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>User Form</h2>
-    <form id="userForm">
-      <input type="text" name="name" placeholder="Name" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <button type="submit">Submit</button>
+
+  <!-- Registration Form -->
+  <div class="container" id="registerSection">
+    <div class="header">
+      <h2>Registration Form</h2>
+    </div>
+
+    <form id="form1">
+      <div class="form-group">
+        <label>First Name</label>
+        <input id="firstName" type="text" placeholder="Enter First Name" required>
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input id="lastName" type="text" placeholder="Enter Last Name" required>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input id="phone" type="text" placeholder="+92" required>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input id="email" type="email" placeholder="Enter Your Gmail" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Enter Password" required>
+      </div>
+      <div class="button-group">
+        <button type="button" onclick="showForm2()">Next</button>
+      </div>
     </form>
 
-    <h2>All Users</h2>
-    <button type="button" onclick="getUsers()">Get Users</button>
-    <ul id="userList"></ul>
+    <form id="form2" class="hidden">
+      <div class="form-group">
+        <label>Select Job</label>
+        <select id="job" required>
+          <option value="" disabled selected>Select Job</option>
+          <option value="assignment">Assignment Work</option>
+          <option value="video">Video Watching</option>
+          <option value="ads">Ads Watching</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Passport Size Pic</label>
+        <input id="passportPic" type="file" accept="image/*" required>
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <input id="age" type="text" placeholder="Enter Age" required>
+      </div>
+      <div class="form-group">
+        <label>ID Card Pic (Front Side)</label>
+        <input id="idFront" type="file" accept="image/*" required>
+      </div>
+      <div class="form-group">
+        <label>ID Card Pic (Back Side)</label>
+        <input id="idBack" type="file" accept="image/*" required>
+      </div>
+      <div class="button-group">
+        <button type="submit">Register</button>
+      </div>
+    </form>
+
+    <div id="success" class="success">
+      ✅ We Accept Your Request. We'll Contact You Soon at <b>launchsector@gmail.com</b>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-container" id="adminSection">
+    <h2>Admin Panel</h2>
+    <div id="authBox">
+      <input type="password" id="adminPass" placeholder="Enter admin password..." />
+      <button id="loginBtn">Login</button>
+    </div>
+    <div id="dashboard" class="hidden">
+      <button id="getUsersBtn">Get Users</button>
+      <div class="user-container" id="userContainer"></div>
+    </div>
   </div>
 
   <script>
-    const form = document.getElementById("userForm");
-    const userList = document.getElementById("userList");
-
-    // Utility: show alerts
     function showAlert(message, type = "success") {
       const alertBox = document.createElement("div");
       alertBox.textContent = message;
       alertBox.className = `alert ${type}`;
       document.body.appendChild(alertBox);
-
       setTimeout(() => {
         alertBox.classList.add("fade-out");
         setTimeout(() => alertBox.remove(), 400);
       }, 2500);
     }
 
-    // Add user
-    form.addEventListener("submit", async (e) => {
+    function showForm2() {
+      const form1 = document.getElementById('form1');
+      if (form1.checkValidity()) {
+        form1.classList.add('hidden');
+        document.getElementById('form2').classList.remove('hidden');
+      } else {
+        form1.reportValidity();
+      }
+    }
+
+    document.getElementById('form2').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+
+      const form1Data = {
+        firstName: document.getElementById('firstName').value.trim(),
+        lastName: document.getElementById('lastName').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value.trim(),
+      };
+
+      const form2Data = {
+        job: document.getElementById('job').value,
+        age: document.getElementById('age').value.trim(),
+      };
+
+      const toBase64 = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
 
       try {
+        const passportPic = await toBase64(document.getElementById('passportPic').files[0]);
+        const idFront = await toBase64(document.getElementById('idFront').files[0]);
+        const idBack = await toBase64(document.getElementById('idBack').files[0]);
+
+        const userData = { 
+          ...form1Data, 
+          ...form2Data, 
+          passportPic, 
+          idFront, 
+          idBack 
+        };
+
         const res = await fetch("/api/add-user", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(userData),
         });
 
-        if (!res.ok) throw new Error("Failed to add user");
-        showAlert("✅ User added successfully!");
-        form.reset();
+        if (!res.ok) throw new Error("Failed to register user");
+
+        showAlert("✅ Registration successful!");
+        document.getElementById('form2').classList.add('hidden');
+        document.getElementById('success').style.display = 'block';
       } catch (err) {
         showAlert(`❌ ${err.message}`, "error");
       }
     });
 
-    // Fetch users (password protected)
-    async function getUsers() {
-      const password = prompt("Enter password to view users:");
-      if (!password) return;
+    // ==== Admin Panel Logic ====
+    const authBox = document.getElementById("authBox");
+    const dashboard = document.getElementById("dashboard");
+    const getUsersBtn = document.getElementById("getUsersBtn");
+    const userContainer = document.getElementById("userContainer");
 
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const pass = document.getElementById("adminPass").value.trim();
+      if (pass === "development123") {
+        authBox.style.display = "none";
+        dashboard.classList.remove("hidden");
+        showAlert("✅ Access granted!");
+      } else {
+        showAlert("❌ Wrong password", "error");
+      }
+    });
+
+    getUsersBtn.addEventListener("click", async () => {
       try {
-        const res = await fetch(`/api/get-users?password=${encodeURIComponent(password)}`);
-        if (res.status === 401) {
-          showAlert("❌ Incorrect password!", "error");
+        const res = await fetch(`/api/get-users?password=development123`);
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const users = await res.json();
+        userContainer.innerHTML = "";
+
+        if (users.length === 0) {
+          userContainer.innerHTML = "<p>No users found.</p>";
           return;
         }
-        if (!res.ok) throw new Error("Failed to fetch users");
 
-        const users = await res.json();
-        userList.style.display = "block";
-        userList.innerHTML = users.map((u) => {
-          const initials = u.name ? u.name.charAt(0).toUpperCase() : "?";
-          return `
-            <li>
-              <div class="avatar">${initials}</div>
-              <div class="user-info">
-                <span class="name">${u.name}</span>
-                <span class="email">${u.email}</span>
-              </div>
-            </li>
+        users.forEach((u) => {
+          const card = document.createElement("div");
+          card.className = "user-card";
+          card.innerHTML = `
+            <h3>${u.name}</h3>
+            <p><b>Email:</b> ${u.email}</p>
+            <p><b>Phone:</b> ${u.phone}</p>
+            <p><b>Job:</b> ${u.job || "-"}</p>
+            <p><b>Age:</b> ${u.age || "-"}</p>
+            <p><b>Registered:</b> ${new Date(u.createdAt).toLocaleString()}</p>
+            <div>
+              ${u.passportPic ? `<img src="${u.passportPic}" alt="Passport Pic" />` : ""}
+              ${u.idFront ? `<img src="${u.idFront}" alt="ID Front" />` : ""}
+              ${u.idBack ? `<img src="${u.idBack}" alt="ID Back" />` : ""}
+            </div>
           `;
-        }).join("");
-        showAlert("📋 Users fetched successfully!");
+          userContainer.appendChild(card);
+        });
       } catch (err) {
-
-
-
-        
         showAlert(`❌ ${err.message}`, "error");
       }
-    }
+    });
   </script>
 </body>
 </html>
